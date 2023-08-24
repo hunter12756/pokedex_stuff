@@ -2,6 +2,8 @@ from app import app
 from app.models import db, Pokemon, Item
 from random import randint
 with app.app_context():
+    db.drop_all()
+    db.create_all()
     pokemons = [
         {
             'number': 1,
