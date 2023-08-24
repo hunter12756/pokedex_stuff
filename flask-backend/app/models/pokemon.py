@@ -22,7 +22,7 @@ class Pokemon(db.Models):
 
     #relationships
     #One pokemon has MANY items
-    items = db.relationship("Item",back_populates='pokemon',as_alias='pokemon')
+    items = db.relationship("Item", back_populates='pokemon')
 
     def validate(self):
         if self.number < 1:

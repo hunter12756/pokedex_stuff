@@ -1,6 +1,6 @@
 from .db import db
 
-class Item(db.Models):
+class Item(db.Model):
     __tablename__='items'
 
     id = db.Column(db.Integer,primary_key=True)
@@ -12,7 +12,7 @@ class Item(db.Models):
 
     #relationships
     #many items belong to ONE pokemon
-    pokemon = db.relationship("Pokemon",back_populates='',as_alias='pokemon')
+    pokemon = db.relationship("Pokemon", back_populates='items')
 
     def to_dict(self):
         return {

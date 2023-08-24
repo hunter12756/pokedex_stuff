@@ -1,8 +1,10 @@
-from flask import Flask, request
+from flask import Flask, request, render_template
 from app.config import Config
 import os
-from sqlalchemy import update, delete
-from ..models import Item
+# from sqlalchemy import update, delete
+from .forms.items_form import ItemForm
+from .models.item import Item
+from .models.db import db
 
 # import statement for CSRF
 
@@ -11,6 +13,7 @@ from flask_wtf.csrf import CSRFProtect, generate_csrf
 app = Flask(__name__)
 
 app.config.from_object(Config)
+db.init_app(app)
 
 # after request code for CSRF token injection
 @app.after_request
@@ -25,8 +28,12 @@ def inject_csrf_token(response):
     return response
 
 
-# @app.route('/items/<int:id>')
-# def update_item_form(id):
+@app.route('/items/<int:id>')
+def update_item_form(id):
+    form = ItemForm()
+    item = Item.query.where(id = id).one()
+    print(item)
+    return render_template('update_item_form.html', form = form)
 
 
 
