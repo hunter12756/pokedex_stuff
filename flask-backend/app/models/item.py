@@ -8,11 +8,11 @@ class Item(db.Models):
     image_url = db.Column(db.String(255),nullable=False)
     name = db.Column(db.String(255),nullable=False)
     price = db.Column(db.Integer,nullable=False)
-    pokemon_id = db.Column(db.Integer,db.ForeignKey("Pokemon.id"))
+    pokemon_id = db.Column(db.Integer,db.ForeignKey("pokemons.id"))
 
     #relationships
     #many items belong to ONE pokemon
-    pokemon = db.relationship("Pokemon",back_populates='',as_alias='pokemon')
+    pokemon = db.relationship("Pokemon",back_populates='items',as_alias='pokemon')
 
     def to_dict(self):
         return {

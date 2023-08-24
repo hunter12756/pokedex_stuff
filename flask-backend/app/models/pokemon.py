@@ -24,19 +24,19 @@ class Pokemon(db.Models):
     #One pokemon has MANY items
     items = db.relationship("Item",back_populates='pokemon',as_alias='pokemon')
 
-    def validate(self):
-        if self.number < 1:
-            raise ValueError("Number must be greater than 1")
-        if self.attack < 0 or self.attack > 100:
-            raise ValueError("Attack must be between 0 and 100")
-        if self.defense < 0 or self.defense > 100:
-            raise ValueError("Defense must be between 0 and 100")
-        if len(self.name) < 3 or len(self.name) > 255:
-            raise ValueError("Name must be between 3 and 255 characters")
-        if self.encounter_rate < 0 or self.encounter_rate > 100:
-            raise ValueError("Encounter rate must be between 0 and 100")
-        if self.catch_rate < 0 or self.catch_rate > 100:
-            raise ValueError("Catch rate must be between 0 and 100")
+    # def validate(self):
+    #     if self.number < 1:
+    #         raise ValueError("Number must be greater than 1")
+    #     if self.attack < 0 or self.attack > 100:
+    #         raise ValueError("Attack must be between 0 and 100")
+    #     if self.defense < 0 or self.defense > 100:
+    #         raise ValueError("Defense must be between 0 and 100")
+    #     if len(self.name) < 3 or len(self.name) > 255:
+    #         raise ValueError("Name must be between 3 and 255 characters")
+    #     if self.encounter_rate < 0 or self.encounter_rate > 100:
+    #         raise ValueError("Encounter rate must be between 0 and 100")
+    #     if self.catch_rate < 0 or self.catch_rate > 100:
+    #         raise ValueError("Catch rate must be between 0 and 100")
 
 
     @property
