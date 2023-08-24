@@ -1,9 +1,10 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from flask_migrate import Migrate
 from app.config import Config
 import os
-# from sqlalchemy import update, delete
+from sqlalchemy import update, delete, insert
 from .forms.items_form import ItemForm
+from .models.pokemon import Pokemon
 from .models.item import Item
 from .models.db import db
 
@@ -35,6 +36,7 @@ def inject_csrf_token(response):
 @app.route('/items/<int:id>')
 def update_item_form(id):
     form = ItemForm()
+    form['csrf_token'].data = request.cookies['csrf_token']
     item = Item.query.where(id=id).one()
     print(item)
     return render_template('update_item_form.html', form=form)
@@ -42,48 +44,39 @@ def update_item_form(id):
 
 @app.route('/items/<int:id>', methods=['PUT'])
 def update_item(id):
-    item = update(Item).where(Item.id == id).one()
-    data = request.form
-
-    updated_item = (
-        update(Item)
-        .where(Item.id == id)
-        .values(data)
-    )
-
-    return updated_item
-
+    item = Item.query.get_or_404(id)
+    for key, value in request.json.items():
+        setattr(item, key, value)
+    db.session.commit()
+    return jsonify(item.to_dict())
 
 
 @app.route('/pokemon')
 def list_pokemon():
-    pokemon = Pokemon.query.all()
-    print(pokemon)
-    return pokemon
+    pokemons = Pokemon.query.all()
+    print(pokemons)
+    return jsonify([p.to_dict() for p in pokemons])
 
 
 @app.route('/pokemon/<int:id>')
-def pokemon_detail():
-    pokemon = Pokemon.query.where(id == id).one()
-
-    print(pokemon)
-    return pokemon
-
+def pokemon_detail(id):
+    pokemon = Pokemon.query.get_or_404(id)
+    return jsonify(pokemon.to_dict())
 
 
 @app.route('/pokemon', methods=['POST'])
-def pokemon_detail():
-    data = request.form
-    pokemon = insert(Pokemon).values(data)
-
-    print(pokemon)
-    return pokemon
-
+def create_pokemon():
+    data = request.json
+    new_pokemon = Pokemon(**data)
+    db.session.add(new_pokemon)
+    db.session.commit()
+    return jsonify(new_pokemon.to_dict())
 
 
 @app.route('/pokemon/<int:id>', methods=['PUT'])
 def update_pokemon(id):
-    data = request.form
-    updated_pokemon = update(Pokemon).where(Pokemon.id == id).values(data)
-
-    return updated_pokemon
+    pokemon = Pokemon.query.get_or_404(id)
+    for key, value in request.json.items():
+        setattr(pokemon, key, value)
+    db.session.commit()
+    return jsonify(pokemon.to_dict())
