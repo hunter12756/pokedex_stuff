@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, jsonify
 from flask_migrate import Migrate
 from app.config import Config
 import os
+import json
 from sqlalchemy import update, delete, insert
 from .forms.items_form import ItemForm
 from .models.pokemon import Pokemon
@@ -54,8 +55,8 @@ def update_item(id):
 @app.route('/pokemon')
 def list_pokemon():
     pokemons = Pokemon.query.all()
-    print(pokemons)
-    return jsonify([p.to_dict() for p in pokemons])
+
+    return json.dumps([p.to_dict() for p in pokemons])
 
 
 @app.route('/pokemon/<int:id>')
