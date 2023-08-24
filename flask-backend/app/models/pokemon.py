@@ -1,6 +1,6 @@
 from .db import db
 from enum import Enum
-from .pokemon_type import type_list
+from .pokemon_type import PokemonType
 import json
 
 class Pokemon(db.Model):
@@ -12,7 +12,7 @@ class Pokemon(db.Model):
     defense = db.Column(db.Integer, nullable=False)
     image_url = db.Column(db.String, nullable=False)
     name = db.Column(db.String(255), unique=True, nullable=False)
-    type = db.Column(db.Enum(type_list))
+    type = db.Column(db.Enum(PokemonType))
     moves = db.Column(db.String(255), nullable=False)
     encounter_rate = db.Column(db.Numeric(3,2))
     catch_rate = db.Column(db.Numeric(3,2))

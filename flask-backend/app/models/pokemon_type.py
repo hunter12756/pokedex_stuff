@@ -1,21 +1,19 @@
-types = [
-  "fire",
-  "electric",
-  "normal",
-  "ghost",
-  "psychic",
-  "water",
-  "bug",
-  "dragon",
-  "grass",
-  "fighting",
-  "ice",
-  "flying",
-  "poison",
-  "ground",
-  "rock",
-  "steel",
-]
+from enum import Enum
 
-type_list = ','.join(types)
-
+class PokemonType(Enum):
+    FIRE = "fire"
+    ELECTRIC = "electric"
+    NORMAL = "normal"
+    GHOST = "ghost"
+    PSYCHIC = "psychic"
+    WATER = "water"
+    BUG = "bug"
+    DRAGON = "dragon"
+    GRASS = "grass"
+    FIGHTING = "fighting"
+    ICE = "ice"
+    FLYING = "flying"
+    POISON = "poison"
+    GROUND = "ground"
+    ROCK = "rock"
+    STEEL = "steel"
