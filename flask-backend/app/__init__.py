@@ -1,4 +1,5 @@
 from flask import Flask, request, render_template
+from flask_migrate import Migrate
 from app.config import Config
 import os
 # from sqlalchemy import update, delete
@@ -14,6 +15,7 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 db.init_app(app)
+migrate = Migrate(app, db)
 
 # after request code for CSRF token injection
 @app.after_request
