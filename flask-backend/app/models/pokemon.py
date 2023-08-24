@@ -2,7 +2,14 @@ from .db import db
 from enum import Enum
 from .pokemon_type import PokemonType
 import json
+from enum import Enum
 
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)
 class Pokemon(db.Model):
     __tablename__='pokemons'
 
@@ -55,3 +62,6 @@ class Pokemon(db.Model):
             'catch_rate': self.catch_rate,
             'captured': self.captured
         }
+
+    def to_json(self):
+        return json.dumps(self.to_dict(), cls=EnumEncoder)
