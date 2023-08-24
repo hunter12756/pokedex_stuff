@@ -52,3 +52,38 @@ def update_item(id):
     )
 
     return updated_item
+
+
+
+@app.route('/pokemon')
+def list_pokemon():
+    pokemon = Pokemon.query.all()
+    print(pokemon)
+    return pokemon
+
+
+@app.route('/pokemon/<int:id>')
+def pokemon_detail():
+    pokemon = Pokemon.query.where(id == id).one()
+
+    print(pokemon)
+    return pokemon
+
+
+
+@app.route('/pokemon', methods=['POST'])
+def pokemon_detail():
+    data = request.form
+    pokemon = insert(Pokemon).values(data)
+
+    print(pokemon)
+    return pokemon
+
+
+
+@app.route('/pokemon/<int:id>', methods=['PUT'])
+def update_pokemon(id):
+    data = request.form
+    updated_pokemon = update(Pokemon).where(Pokemon.id == id).values(data)
+
+    return updated_pokemon
