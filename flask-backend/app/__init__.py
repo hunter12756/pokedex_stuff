@@ -18,6 +18,8 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # after request code for CSRF token injection
+
+
 @app.after_request
 def inject_csrf_token(response):
     response.set_cookie(
@@ -33,10 +35,9 @@ def inject_csrf_token(response):
 @app.route('/items/<int:id>')
 def update_item_form(id):
     form = ItemForm()
-    item = Item.query.where(id = id).one()
+    item = Item.query.where(id=id).one()
     print(item)
-    return render_template('update_item_form.html', form = form)
-
+    return render_template('update_item_form.html', form=form)
 
 
 @app.route('/items/<int:id>', methods=['PUT'])
@@ -49,6 +50,5 @@ def update_item(id):
         .where(Item.id == id)
         .values(data)
     )
-
 
     return updated_item
