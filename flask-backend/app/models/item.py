@@ -8,7 +8,7 @@ class Item(db.Model):
     image_url = db.Column(db.String(255),nullable=False)
     name = db.Column(db.String(255),nullable=False)
     price = db.Column(db.Integer,nullable=False)
-    pokemon_id = db.Column(db.Integer,db.ForeignKey("Pokemon.id"))
+    pokemon_id = db.Column(db.Integer,db.ForeignKey("pokemons.id"))
 
     #relationships
     #many items belong to ONE pokemon
