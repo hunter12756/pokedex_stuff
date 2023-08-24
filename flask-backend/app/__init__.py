@@ -3,8 +3,10 @@ from flask_migrate import Migrate
 from app.config import Config
 import os
 import json
+from enum import Enum
 from sqlalchemy import update, delete, insert
 from .forms.items_form import ItemForm
+from .forms.pokemon_form import PokemonForm
 from .models.pokemon import Pokemon
 from .models.item import Item
 from .models.db import db
@@ -20,6 +22,13 @@ db.init_app(app)
 migrate = Migrate(app, db)
 
 # after request code for CSRF token injection
+
+
+class EnumEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Enum):
+            return obj.value
+        return super().default(obj)
 
 
 @app.after_request
@@ -54,24 +63,42 @@ def update_item(id):
 
 @app.route('/pokemon')
 def list_pokemon():
-    pokemons = Pokemon.query.all()
+        pokemons = Pokemon.query.all()
+        pokemon_list = [pokemon.to_dict() for pokemon in pokemons]
+        return json.dumps(pokemon_list, cls=EnumEncoder)
 
-    return json.dumps([p.to_dict() for p in pokemons])
 
 
 @app.route('/pokemon/<int:id>')
 def pokemon_detail(id):
-    pokemon = Pokemon.query.get_or_404(id)
-    return jsonify(pokemon.to_dict())
+    res = Pokemon.query.get(id)
+    pokemon = res.to_dict()
+    return json.dumps(pokemon, cls=EnumEncoder)
 
 
 @app.route('/pokemon', methods=['POST'])
 def create_pokemon():
-    data = request.json
-    new_pokemon = Pokemon(**data)
-    db.session.add(new_pokemon)
-    db.session.commit()
-    return jsonify(new_pokemon.to_dict())
+    form = PokemonForm
+    form['csrf_token'].data = request.cookies['csrf_token']
+
+    if form.validate_on_submit():
+        new_pokemon = Pokemon(
+            number = form.data['number'],
+            attack = form.data['attack'],
+            defense	 = form.data['defense'],
+            image_url = form.data['image_url'],
+            name = form.data['name'],
+            type = form.data['type'],
+            moves = form.data['moves'],
+            encounter_rate = form.data['encounter_rate'],
+            catch_rate = form.data['catch_rate'],
+            captured = form.data['captured']
+        )
+        db.session.add(new_pokemon)
+        db.session.commit()
+        
+        return 'created new pokemon'
+
 
 
 @app.route('/pokemon/<int:id>', methods=['PUT'])
