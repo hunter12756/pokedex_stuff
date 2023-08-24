@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from app.config import Config
 import os
 from sqlalchemy import update, delete
@@ -24,8 +24,22 @@ def inject_csrf_token(response):
         httponly=True)
     return response
 
+
+# @app.route('/items/<int:id>')
+# def update_item_form(id):
+
+
+
 @app.route('/items/<int:id>', methods=['PUT'])
 def update_item(id):
-    item = update(Item).where(id = id).one()
+    item = update(Item).where(Item.id == id).one()
+    data = request.form
 
-    return f'{id}'
+    updated_item = (
+        update(Item)
+        .where(Item.id == id)
+        .values(data)
+    )
+
+
+    return updated_item
