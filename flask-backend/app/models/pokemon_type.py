@@ -16,3 +16,6 @@ types = [
   "rock",
   "steel",
 ]
+
+type_list = ','.join(types)
+
