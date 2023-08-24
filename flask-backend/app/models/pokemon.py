@@ -15,8 +15,8 @@ class Pokemon(db.Models):
     name = db.Column(db.String(255), unique=True, nullable=False)
     type = db.Column(db.Enum(types))
     moves = db.Column(db.String(255), nullable=False)
-    encounter_rate = db.Column(db.Float)
-    catch_rate =db.Column(db.Float)
+    encounter_rate = db.Column(db.Numeric(3,2))
+    catch_rate = db.Column(db.Numeric(3,2))
     captured = db.Column(db.Boolean)
 
 
@@ -33,7 +33,10 @@ class Pokemon(db.Models):
             raise ValueError("Defense must be between 0 and 100")
         if len(self.name) < 3 or len(self.name) > 255:
             raise ValueError("Name must be between 3 and 255 characters")
-
+        if self.encounter_rate < 0 or self.encounter_rate > 100:
+            raise ValueError("Encounter rate must be between 0 and 100")
+        if self.catch_rate < 0 or self.catch_rate > 100:
+            raise ValueError("Catch rate must be between 0 and 100")
 
 
     @property
@@ -46,7 +49,10 @@ class Pokemon(db.Models):
 
     @property
     def moves(self):
-        pass
+        if self.moves:
+            return json.loads(self.moves)
+        else:
+            return None
     @moves.setter
     def moves(self,value):
         self.moves = json.dumps(value)
