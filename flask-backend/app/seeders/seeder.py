@@ -1,5 +1,5 @@
 from app import app
-from .models import db,Pokemon,Item
+from app.models import db, Pokemon, Item
 from random import randint
 #15 pokemon
 with app.app_context():
@@ -220,19 +220,21 @@ with app.app_context():
   ]
   def randomImg():
     images = [
-    "/images/pokemon_berry.svg",
-    "/images/pokemon_egg.svg",
-    "/images/pokemon_potion.svg",
-    "/images/pokemon_super_potion.svg",
+        "/images/pokemon_berry.svg",
+        "/images/pokemon_egg.svg",
+        "/images/pokemon_potion.svg",
+        "/images/pokemon_super_potion.svg",
     ]
-    index = randint(0,4)
+    index = randint(0, len(images) - 1)  # Generate a valid index
     return images[index]
+
   def randomName():
-    names= [
-        'potion','berry','egg','super potion'
+    names = [
+        'potion', 'berry', 'egg', 'super potion'
     ]
-    index= randint(0,4)
+    index = randint(0, len(names) - 1)  # Generate a valid index
     return names[index]
+
   for i in range(1,11):
     item_data = {
         'pokemon_id': i,
