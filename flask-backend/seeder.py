@@ -167,13 +167,13 @@ with app.app_context():
         images = ['/images/pokemon_berry.svg', '/images/pokemon_egg.svg'
                   , '/images/pokemon_potion.svg',
                   '/images/pokemon_super_potion.svg']
-        index = randint(0, 4)
+        index = randint(0, len(images)-1)
         return images[index]
 
 
     def randomName():
         names = ['potion', 'berry', 'egg', 'super potion']
-        index = randint(0, 4)
+        index = randint(0, len(names)-1)
         return names[index]
 
 
