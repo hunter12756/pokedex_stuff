@@ -12,7 +12,7 @@ class Item(db.Model):
 
     #relationships
     #many items belong to ONE pokemon
-    pokemon = db.relationship("Pokemon", back_populates='items')
+    pokemon_items = db.relationship("Pokemon", back_populates='items_pokemon')
 
     def to_dict(self):
         return {
