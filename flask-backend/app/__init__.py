@@ -3,6 +3,7 @@ from flask_migrate import Migrate
 from app.config import Config
 import os
 import json
+from decimal import Decimal
 from enum import Enum
 from sqlalchemy import update, delete, insert
 from .forms.items_form import ItemForm
@@ -28,6 +29,8 @@ class EnumEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, Enum):
             return obj.value
+        elif isinstance(obj, Decimal):
+            return str(obj)
         return super().default(obj)
 
 
@@ -43,15 +46,6 @@ def inject_csrf_token(response):
     return response
 
 
-@app.route('/items/<int:id>')
-def update_item_form(id):
-    form = ItemForm()
-    form['csrf_token'].data = request.cookies['csrf_token']
-    item = Item.query.where(id=id).one()
-    print(item)
-    return render_template('update_item_form.html', form=form)
-
-
 @app.route('/items/<int:id>', methods=['PUT'])
 def update_item(id):
     item = Item.query.get_or_404(id)
@@ -63,10 +57,10 @@ def update_item(id):
 
 @app.route('/pokemon')
 def list_pokemon():
-        pokemons = Pokemon.query.all()
-        pokemon_list = [pokemon.to_dict() for pokemon in pokemons]
-        return json.dumps(pokemon_list, cls=EnumEncoder)
-
+    pokemons = Pokemon.query.all()
+    pokemon_list = [pokemon.to_dict() for pokemon in pokemons]
+    print('pokemon == ', pokemon_list)
+    return json.dumps(pokemon_list, cls=EnumEncoder)
 
 
 @app.route('/pokemon/<int:id>')
@@ -78,9 +72,11 @@ def pokemon_detail(id):
 
 @app.route('/pokemon', methods=['POST'])
 def create_pokemon():
-    form = PokemonForm
+    form = PokemonForm()
     form['csrf_token'].data = request.cookies['csrf_token']
-
+    print(form.validate_on_submit())
+    print("Name:", form.data['name'])
+    print("Type:", form.data['type'])
     if form.validate_on_submit():
         new_pokemon = Pokemon(
             number = form.data['number'],
@@ -96,15 +92,22 @@ def create_pokemon():
         )
         db.session.add(new_pokemon)
         db.session.commit()
-        
+
         return 'created new pokemon'
+    else:
+        errors = []
+        for field, error_list in form.errors.items():
+            errors.extend([f"{field}: {error}" for error in error_list])
+
+        return ', '.join(errors)
 
 
-
-@app.route('/pokemon/<int:id>', methods=['PUT'])
-def update_pokemon(id):
-    pokemon = Pokemon.query.get_or_404(id)
-    for key, value in request.json.items():
-        setattr(pokemon, key, value)
-    db.session.commit()
-    return jsonify(pokemon.to_dict())
+@app.route('/pokemon/<int:id>', methods=['DELETE'])
+def delete_pokemon(id):
+    pokemon = Pokemon.query.get(id)
+    if pokemon:
+        db.session.delete(pokemon)
+        db.session.commit()
+        return json.dumps({'message': 'Pokemon deleted successfully'}), 200
+    else:
+        return json.dumps({'message': 'Pokemon not found'}), 404
